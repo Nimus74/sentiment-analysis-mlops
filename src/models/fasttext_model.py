@@ -6,17 +6,12 @@ Baseline per confronto con Transformer.
 import numpy as np
 # Monkey patch per compatibilità NumPy 2.x con fasttext
 _original_array = np.array
-def _patched_array(obj, copy=None, **kwargs):
-    # Gestisce copy=None (default), copy=True, copy=False
-    if copy is False:
-        # FastText richiede copy=False, usa asarray per compatibilità
-        return np.asarray(obj, **kwargs)
-    elif copy is None:
-        # Comportamento default: passa None a NumPy originale
-        return _original_array(obj, **kwargs)
-    else:
-        # copy=True o altri valori: usa comportamento originale
-        return _original_array(obj, copy=copy, **kwargs)
+def _patched_array(obj, **kwargs):
+    # numpy.array() accetta parametri che np.asarray() non supporta (es. subok, copy).
+    # Alcune librerie (scipy/evidently) passano subok/copy: li rimuoviamo per evitare crash.
+    kwargs.pop("subok", None)
+    kwargs.pop("copy", None)
+    return np.asarray(obj, **kwargs)
 np.array = _patched_array
 
 import fasttext
