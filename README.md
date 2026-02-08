@@ -39,6 +39,37 @@ Apri ed esegui il notebook direttamente in Google Colab:
 > Nota: in alternativa, il notebook può essere condiviso anche tramite Google Drive (modalità tipica di consegna).
 
 
+## 🎛 Demo e funzionalità opzionali (non richieste per la consegna)
+
+Oltre al notebook di consegna, il repository include alcune componenti **opzionali** sviluppate per dimostrare un approccio MLOps end-to-end:
+
+### Demo UI – Analisi del Sentiment
+È disponibile una semplice interfaccia web (Gradio) per testare l’inferenza dei modelli Transformer e FastText:
+
+```bash
+python app.py
+```
+
+L’applicazione sarà disponibile all’indirizzo:
+http://127.0.0.1:7860
+
+### Monitoring & Reporting (POC)
+Il progetto include inoltre una dashboard di monitoring realizzata in Streamlit, con report generati tramite Evidently AI:
+
+```bash
+streamlit run src/monitoring/dashboard.py
+```
+
+La dashboard consente di visualizzare:
+- Data Quality
+- Data Drift
+- Prediction Drift
+- Performance del modello
+
+> Nota: queste funzionalità sono **proof-of-concept** e non sono richieste ai fini della valutazione.
+> La consegna ufficiale del progetto è rappresentata dal notebook Google Colab indicato sopra.
+
+
 ## 🚀 Quick Start
 
 ### Installazione
