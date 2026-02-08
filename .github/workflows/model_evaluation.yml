@@ -1,0 +1,83 @@
+name: Model Evaluation
+
+on:
+  push:
+    tags:
+      - 'v*'
+  workflow_dispatch:
+
+jobs:
+  evaluate:
+    runs-on: ubuntu-latest
+    
+    steps:
+    - uses: actions/checkout@v3
+    
+    - name: Set up Python
+      uses: actions/setup-python@v4
+      with:
+        python-version: '3.10'
+    
+    - name: Install dependencies
+      run: |
+        python -m pip install --upgrade pip
+        pip install -r requirements.txt
+    
+    - name: Download dataset
+      run: |
+        python -m src.data.download_dataset
+    
+    - name: Preprocess data
+      run: |
+        python -m src.data.preprocessing
+    
+    - name: Train Transformer
+      run: |
+        python -m src.training.train_transformer --config configs/config.yaml
+    
+    - name: Train FastText
+      run: |
+        python -m src.training.train_fasttext --config configs/config.yaml
+    
+    - name: Evaluate models
+      run: |
+        python -m src.evaluation.compare_models --config configs/config.yaml
+      continue-on-error: true
+    
+    - name: Check metrics threshold
+      run: |
+        python -c "
+        import yaml
+        import json
+        import os
+        
+        # Carica metriche da MLflow o file
+        # Per semplicità, assumiamo che le metriche siano in un file
+        # In produzione, leggeresti da MLflow
+        
+        config = yaml.safe_load(open('configs/config.yaml'))
+        threshold = config['metrics']['thresholds']['macro_f1_min']
+        
+        # Qui dovresti leggere le metriche effettive
+        # Per ora, fallisce se non trovi il file
+        if not os.path.exists('metrics.json'):
+            print('Metriche non trovate')
+            exit(1)
+        
+        metrics = json.load(open('metrics.json'))
+        macro_f1 = metrics.get('macro_f1', 0)
+        
+        if macro_f1 < threshold:
+            print(f'Macro-F1 ({macro_f1:.4f}) < threshold ({threshold:.4f})')
+            exit(1)
+        else:
+            print(f'✓ Macro-F1 ({macro_f1:.4f}) >= threshold ({threshold:.4f})')
+        "
+    
+    - name: Upload models
+      if: success()
+      uses: actions/upload-artifact@v3
+      with:
+        name: models
+        path: models/
+

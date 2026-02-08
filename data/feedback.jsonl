@@ -1,0 +1,17 @@
+{"text": "Questo prodotto \u00e8 fantastico!", "prediction": "positive", "actual_label": "positive", "model_used": "transformer", "feedback_score": 5}
+{"text": "Il servizio \u00e8 stato ok", "prediction": "neutral", "actual_label": null, "model_used": "fasttext", "feedback_score": null}
+{"text": "test", "prediction": "positive", "actual_label": "positive", "model_used": "transformer", "feedback_score": null}
+{"text": "Questo \u00e8 un test", "prediction": "positive", "actual_label": "positive", "model_used": "transformer", "feedback_score": 5}
+{"text": "Test", "prediction": "positive", "actual_label": null, "model_used": "transformer", "feedback_score": null}
+{"text": "Questo \u00e8 un test", "prediction": "positive", "actual_label": "positive", "model_used": "transformer", "feedback_score": 5}
+{"text": "Test", "prediction": "positive", "actual_label": null, "model_used": "transformer", "feedback_score": null}
+{"text": "Questo \u00e8 un test", "prediction": "positive", "actual_label": "positive", "model_used": "transformer", "feedback_score": 5}
+{"text": "Test", "prediction": "positive", "actual_label": null, "model_used": "transformer", "feedback_score": null}
+{"text": "Questo \u00e8 un test", "prediction": "positive", "actual_label": "positive", "model_used": "transformer", "feedback_score": 5}
+{"text": "Test", "prediction": "positive", "actual_label": null, "model_used": "transformer", "feedback_score": null}
+{"text": "Questo \u00e8 un test", "prediction": "positive", "actual_label": "positive", "model_used": "transformer", "feedback_score": 5}
+{"text": "Test", "prediction": "positive", "actual_label": null, "model_used": "transformer", "feedback_score": null}
+{"text": "Questo \u00e8 un test", "prediction": "positive", "actual_label": "positive", "model_used": "transformer", "feedback_score": 5}
+{"text": "Test", "prediction": "positive", "actual_label": null, "model_used": "transformer", "feedback_score": null}
+{"text": "Questo \u00e8 un test", "prediction": "positive", "actual_label": "positive", "model_used": "transformer", "feedback_score": 5}
+{"text": "Test", "prediction": "positive", "actual_label": null, "model_used": "transformer", "feedback_score": null}

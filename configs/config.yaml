@@ -1,0 +1,138 @@
+# Configurazione Sentiment Analysis MLOps
+
+# Metriche
+metrics:
+  primary: "macro_f1"  # Metrica principale per valutazione
+  secondary:
+    - "accuracy"
+    - "precision"
+    - "recall"
+    - "f1_per_class"
+    - "confusion_matrix"
+  
+  # Soglie per CI/CD gating
+  thresholds:
+    macro_f1_min: 0.75  # Macro-F1 minimo per promozione modello
+    macro_f1_improvement: 0.02  # Miglioramento minimo per promozione (+2%)
+    per_class_f1_min: 0.60  # F1 minimo per classe singola
+
+# Dataset
+dataset:
+  name: "cardiffnlp/tweet_sentiment_multilingual"  # Dataset Hugging Face
+  language: "it"  # Filtro lingua italiana
+  csv_url: "https://huggingface.co/datasets/theoracle/Italian.sentiment.analysis/raw/main/formatted_text.csv"  # URL diretto CSV italiano
+  cache_dir: "data/raw"
+  
+# Split dati
+split:
+  train_size: 0.70
+  val_size: 0.15
+  test_size: 0.15
+  random_seed: 42
+  stratify: true  # Mantenere distribuzione classi
+  
+# Preprocessing
+preprocessing:
+  remove_urls: true
+  remove_mentions: true
+  normalize_hashtags: true
+  normalize_special_chars: true
+  min_text_length: 3
+  max_text_length: 512  # Per Transformer
+
+# Modello Transformer
+transformer:
+  model_name: "cardiffnlp/twitter-xlm-roberta-base-sentiment"  # Modello multilingue (supporta italiano)
+  max_length: 128
+  batch_size: 16
+  learning_rate: 0.00002  # 2e-5 come float esplicito
+  num_epochs: 3
+  early_stopping_patience: 2
+  early_stopping_min_delta: 0.001
+  fine_tune: true  # Se true, fa fine-tuning su dataset italiano
+  
+# Modello FastText
+fasttext:
+  model_type: "supervised"
+  lr: 0.1
+  epoch: 25
+  wordNgrams: 2
+  dim: 100
+  minCount: 1
+  minn: 3
+  maxn: 6
+  bucket: 2000000
+
+# MLflow
+mlflow:
+  tracking_uri: "file:./mlruns"
+  experiment_name: "sentiment_analysis"
+  log_models: true
+  log_artifacts: true
+
+# API
+api:
+  host: "0.0.0.0"
+  port: 8000
+  reload: false
+  workers: 1
+  model_cache_size: 2  # Numero modelli da tenere in memoria
+
+# Monitoring Evidently AI
+monitoring:
+  reference_dataset_path: "data/processed/train.csv"
+  reports_dir: "monitoring/reports"
+  check_interval_days: 1  # Controllo giornaliero
+  
+  # Soglie per alert
+  data_drift_threshold: 0.2  # PSI threshold
+  prediction_drift_threshold: 0.15
+  data_quality_threshold: 0.9  # Min quality score
+  
+  # Metriche da monitorare
+  monitor_features:
+    - "text_length"
+    - "vocabulary_size"
+    - "special_chars_ratio"
+
+# Retraining
+retraining:
+  # Trigger per retraining
+  triggers:
+    data_drift: true  # Retrain se data drift rilevato
+    performance_degradation: true  # Retrain se performance degradata
+    scheduled: true  # Retraining schedulato
+    schedule_interval_days: 30  # Retrain mensile
+  
+  # Criteri promozione
+  promotion:
+    min_improvement_f1: 0.02  # +2% macro-F1
+    max_class_degradation: 0.05  # Max -5% per classe
+    validation_on_holdout: true
+  
+  # FastText retraining
+  fasttext:
+    enabled: true
+    min_new_samples: 100  # Minimo nuovi campioni per retrain
+  
+  # Transformer retraining (opzionale, più costoso)
+  transformer:
+    enabled: false  # Disabilitato di default
+    min_new_samples: 500
+
+# Paths
+paths:
+  data_raw: "data/raw"
+  data_processed: "data/processed"
+  data_splits: "data/splits"
+  models_transformer: "models/transformer"
+  models_fasttext: "models/fasttext"
+  reports: "reports"
+  monitoring_reports: "monitoring/reports"
+
+# Logging
+logging:
+  level: "INFO"
+  format: "%(asctime)s - %(name)s - %(levelname)s - %(message)s"
+  file: "logs/sentiment_analysis.log"
+
