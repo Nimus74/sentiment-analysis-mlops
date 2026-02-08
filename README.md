@@ -2,12 +2,14 @@
 
 Sistema focalizzato sull'analisi del sentiment con architettura orientata MLOps, che utilizza un modello Transformer come approccio principale e FastText come baseline addestrata nel progetto per confronto.
 
+
 ## 📋 Overview
 
 Questo progetto implementa un sistema di sentiment analysis che permette di:
 - Classificare il sentiment in positivo, neutro, negativo
 - Confrontare modelli Transformer e FastText
 - Integrare componenti sperimentali di monitoring
+
 
 ## 🏗️ Architettura
 
@@ -21,9 +23,21 @@ Il sistema è composto da:
 - **Monitoring**: Componenti di monitoring sperimentali per data quality e drift
 - **Retraining**: Retraining automatico opzionale e sperimentale per FastText
 
+
 ## Allineamento con la traccia della consegna
 
-Sebbene la traccia della consegna menzioni l'uso di FastText, in questo progetto è stato scelto un modello Transformer come soluzione primaria a causa delle sue prestazioni superiori su testi provenienti dai social media. FastText è incluso come baseline supervisionata, addestrata su dataset pubblici e utilizzata per confronto. Questa scelta progettuale è intenzionale e documentata per motivi di accuratezza e completezza nell'analisi.
+Sebbene la traccia della consegna menzioni l'uso di FastText, in questo progetto è stato scelto un modello Transformer come soluzione primaria in quanto dimostra prestazioni superiori su testi brevi e rumorosi tipici dei social media. FastText è incluso come baseline supervisionata, addestrata su dataset pubblici e utilizzata per confronto. Questa scelta progettuale è intenzionale e documentata per motivi di accuratezza e completezza nell'analisi.
+
+
+## Notebook Google Colab (Consegna)
+
+Apri ed esegui il notebook direttamente in Google Colab:
+
+- **Colab**: https://colab.research.google.com/github/Nimus74/sentiment-analysis-mlops/blob/main/notebooks/DELIVERY_colab_sentiment_analysis.ipynb
+- **Repository**: https://github.com/Nimus74/sentiment-analysis-mlops
+
+> Nota: in alternativa, il notebook può essere condiviso anche tramite Google Drive (modalità tipica di consegna).
+
 
 ## 🚀 Quick Start
 
@@ -104,19 +118,23 @@ sentiment_analysis/
 └── .github/workflows/ # CI/CD pipelines
 ```
 
-## 🔗 Link Utili
-
-- **Notebook Colab**: (da completare)
-- **Hugging Face Space (deploy opzionale)**: (da completare)
-- **Documentazione**: Vedi cartella `docs/`
 
 ## 📚 Documentazione
 
-- [Guida POC Test Live](docs/POC_TEST_LIVE.md) - **Guida completa passo-passo per eseguire tutto il progetto**
+La documentazione presente nella cartella `docs/` include materiali di supporto e approfondimento
+sviluppati durante il progetto, alcuni dei quali in forma di proof-of-concept o documentazione tecnica
+di lavoro.
+
+I file principali includono:
+- [Guida POC Test Live](docs/POC_TEST_LIVE.md) – guida operativa passo-passo all’esecuzione del progetto
 - [Architettura](docs/ARCHITECTURE.md)
 - [Modelli](docs/MODELS.md)
 - [Deploy](docs/DEPLOYMENT.md)
 - [Monitoring](docs/MONITORING.md)
+
+> Nota: parte della documentazione ha carattere **sperimentale o tecnico-interno** ed è fornita
+> a supporto della comprensione del progetto.
+
 
 ## 🧪 Testing
 
