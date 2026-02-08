@@ -9,11 +9,11 @@ with open("requirements.txt", "r", encoding="utf-8") as fh:
 setup(
     name="sentiment-analysis-mlops",
     version="0.1.0",
-    author="AI Engineering Team",
+    author="Francesco Scarano",
     description="Sistema completo di analisi del sentiment sui social media con MLOps",
     long_description=long_description,
     long_description_content_type="text/markdown",
-    url="https://github.com/yourusername/sentiment-analysis-mlops",
+    uurl="https://github.com/Nimus74/sentiment-analysis-mlops",
     packages=find_packages(),
     package_dir={"": "."},
     classifiers=[
