@@ -1,26 +1,29 @@
 # Sentiment Analysis MLOps
 
-Sistema completo end-to-end di analisi del sentiment sui social media con architettura MLOps, confronto tra modelli Transformer e FastText, deploy su Hugging Face, monitoring continuo con Evidently AI e retraining automatico.
+Sistema focalizzato sull'analisi del sentiment con architettura orientata MLOps, che utilizza un modello Transformer come approccio principale e FastText come baseline addestrata nel progetto per confronto.
 
 ## 📋 Overview
 
 Questo progetto implementa un sistema di sentiment analysis che permette di:
-- Analizzare automaticamente testi provenienti dai social media
 - Classificare il sentiment in positivo, neutro, negativo
-- Monitorare nel tempo l'andamento della reputazione
-- Adattarsi a cambiamenti nel linguaggio tramite retraining automatico
+- Confrontare modelli Transformer e FastText
+- Integrare componenti sperimentali di monitoring
 
 ## 🏗️ Architettura
 
 Il sistema è composto da:
 - **Data Pipeline**: Ingestion, preprocessing, validation e split riproducibili
-- **Modelli**: Transformer (cardiffnlp/twitter-roberta-base-sentiment-latest) e FastText supervised
-- **MLOps**: MLflow per experiment tracking, Evidently AI per monitoring
+- **Modelli**: Transformer basato su cardiffnlp/twitter-roberta-base-sentiment-latest come modello principale; FastText addestrato come baseline nel progetto per confronto
+- **MLOps**: MLflow per experiment tracking, Evidently AI per monitoring sperimentale
 - **API**: FastAPI per inferenza con selezione backend
-- **Deploy**: Hugging Face Spaces e Model Hub
-- **CI/CD**: GitHub Actions con test automatici e gating metriche
-- **Monitoring**: Data quality, data drift, prediction drift
-- **Retraining**: Automatico per FastText con criteri di promozione
+- **Deploy**: Deploy su Hugging Face opzionale e sperimentale
+- **CI/CD**: GitHub Actions con test automatici
+- **Monitoring**: Componenti di monitoring sperimentali per data quality e drift
+- **Retraining**: Retraining automatico opzionale e sperimentale per FastText
+
+## Allineamento con la traccia della consegna
+
+Sebbene la traccia della consegna menzioni l'uso di FastText, in questo progetto è stato scelto un modello Transformer come soluzione primaria a causa delle sue prestazioni superiori su testi provenienti dai social media. FastText è incluso come baseline supervisionata, addestrata su dataset pubblici e utilizzata per confronto. Questa scelta progettuale è intenzionale e documentata per motivi di accuratezza e completezza nell'analisi.
 
 ## 🚀 Quick Start
 
@@ -28,7 +31,7 @@ Il sistema è composto da:
 
 ```bash
 # Clonare il repository
-git clone https://github.com/yourusername/sentiment-analysis-mlops.git
+git clone https://github.com/Nimus74/sentiment-analysis-mlops.git
 cd sentiment-analysis-mlops
 
 # Creare ambiente virtuale
@@ -81,7 +84,6 @@ print(response.json())
 
 - **Metrica principale**: Macro-F1 Score
 - **Metriche secondarie**: Accuracy, Precision, Recall per classe, Confusion Matrix
-- **Soglia CI/CD**: Macro-F1 > 0.75
 
 ## 📁 Struttura Progetto
 
@@ -104,8 +106,8 @@ sentiment_analysis/
 
 ## 🔗 Link Utili
 
-- **Notebook Colab**: [Link al notebook](https://colab.research.google.com/...)
-- **Hugging Face Space**: [Link allo Space](https://huggingface.co/spaces/...)
+- **Notebook Colab**: (da completare)
+- **Hugging Face Space (deploy opzionale)**: (da completare)
 - **Documentazione**: Vedi cartella `docs/`
 
 ## 📚 Documentazione
@@ -126,15 +128,8 @@ pytest
 pytest --cov=src --cov-report=html
 ```
 
-## 🤝 Contributing
+## 📝 Stato del progetto / Limitazioni
 
-Contributi benvenuti! Per maggiori dettagli vedi [CONTRIBUTING.md](CONTRIBUTING.md).
-
-## 📝 License
-
-MIT License - vedi [LICENSE](LICENSE) per dettagli.
-
-## 👥 Team
-
-AI Engineering & MLOps Team
-
+- CI e test automatici sono implementati e tutti i test sono superati con successo
+- Componenti di monitoring sono implementati come proof-of-concept e non ancora integrati in un sistema di produzione completo
+- Deploy su Hugging Face e retraining continuo non sono completamente automatizzati e rappresentano estensioni opzionali e sperimentali del progetto
