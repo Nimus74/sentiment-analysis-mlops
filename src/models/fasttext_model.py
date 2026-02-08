@@ -3,16 +3,27 @@ Implementazione modello FastText supervised per sentiment analysis.
 Baseline per confronto con Transformer.
 """
 
-import numpy as np
-# Monkey patch per compatibilità NumPy 2.x con fasttext
-_original_array = np.array
-def _patched_array(obj, **kwargs):
-    # numpy.array() accetta parametri che np.asarray() non supporta (es. subok, copy).
-    # Alcune librerie (scipy/evidently) passano subok/copy: li rimuoviamo per evitare crash.
+# --- numpy patch (safe) ---
+import numpy as _np
+
+_original_np_array = _np.array
+
+def _patched_array(*args, **kwargs):
+    """
+    Safe wrapper around numpy.array.
+    Some libraries call np.array with kwargs like subok/copy, and sometimes
+    pass dtype as a positional arg. We accept both and forward safely.
+    """
     kwargs.pop("subok", None)
     kwargs.pop("copy", None)
-    return np.asarray(obj, **kwargs)
-np.array = _patched_array
+    return _original_np_array(*args, **kwargs)
+
+_np.array = _patched_array
+# --- end numpy patch ---
+
+# Import numpy normalmente per uso nel resto del codice
+# (Python riutilizza lo stesso modulo, quindi np.array è già patchato)
+import numpy as np
 
 import fasttext
 from typing import List, Dict, Optional
