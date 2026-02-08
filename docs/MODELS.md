@@ -1,207 +1,60 @@
-# Confronto Modelli: Transformer vs FastText
-
-## Overview
-
-Il progetto implementa due modelli per sentiment analysis:
-1. **Transformer** (cardiffnlp/twitter-roberta-base-sentiment-latest)
-2. **FastText** (supervised)
-
-Entrambi sono valutati sullo stesso dataset con le stesse metriche per un confronto equo.
-
-## Modello Transformer
-
-### Caratteristiche
-
-- **Architettura**: RoBERTa base pre-addestrato su Twitter
-- **Dimensione**: ~125M parametri
-- **Preprocessing**: Tokenizzazione BPE, max length 128
-- **Fine-tuning**: Opzionale su dataset italiano
-
-### Vantaggi
-
-- ✅ **Alta accuratezza**: Migliori performance su test complessi
-- ✅ **Contesto**: Comprensione contestuale avanzata
-- ✅ **Pre-addestrato**: Conoscenza linguistica già incorporata
-- ✅ **Fine-tuning**: Adattabile a domini specifici
-
-### Svantaggi
-
-- ❌ **Lentezza**: Inferenza più lenta (~100-200ms per testo)
-- ❌ **Risorse**: Richiede GPU per training, più memoria
-- ❌ **Costi**: Più costoso computazionalmente
-
-### Performance Attese
-
-- Macro-F1: **0.85-0.90**
-- Accuracy: **0.85-0.90**
-- Latenza: **100-200ms** (CPU), **10-50ms** (GPU)
-
-## Modello FastText
-
-### Caratteristiche
-
-- **Architettura**: FastText supervised
-- **Dimensione**: ~100MB (modello addestrato)
-- **Preprocessing**: Formato FastText (__label__<label> <text>)
-- **N-grams**: Word n-grams (2) + character n-grams (3-6)
-
-### Vantaggi
-
-- ✅ **Velocità**: Inferenza molto veloce (~1-5ms per testo)
-- ✅ **Leggerezza**: Modello piccolo, poca memoria
-- ✅ **Retraining**: Facile e veloce da retrainare
-- ✅ **Efficienza**: CPU-friendly, no GPU necessaria
-
-### Svantaggi
-
-- ❌ **Accuratezza**: Performance generalmente inferiori a Transformer
-- ❌ **Contesto**: Limitata comprensione contestuale
-- ❌ **OOV**: Gestione parole fuori vocabolario limitata
-
-### Performance Attese
-
-- Macro-F1: **0.75-0.85**
-- Accuracy: **0.75-0.85**
-- Latenza: **1-5ms**
-
-## Confronto Diretto
-
-| Metrica | Transformer | FastText | Differenza |
-|---------|-------------|----------|------------|
-| Macro-F1 | 0.85-0.90 | 0.75-0.85 | +5-10% |
-| Accuracy | 0.85-0.90 | 0.75-0.85 | +5-10% |
-| Latenza (CPU) | 100-200ms | 1-5ms | 20-200x più veloce |
-| Dimensione | ~500MB | ~100MB | 5x più piccolo |
-| Training Time | Ore (con GPU) | Minuti | 100x più veloce |
-| Retraining | Complesso | Semplice | - |
-
-## Quando Usare Quale Modello
-
-### Usa Transformer quando:
-
-- ✅ **Accuratezza critica**: Hai bisogno della massima precisione
-- ✅ **Testi complessi**: Testi con sarcasmo, contesto sottile
-- ✅ **Risorse disponibili**: GPU disponibile, latenza non critica
-- ✅ **Budget**: Budget computazionale sufficiente
-
-### Usa FastText quando:
-
-- ✅ **Velocità critica**: Inferenza real-time, alta throughput
-- ✅ **Risorse limitate**: CPU only, memoria limitata
-- ✅ **Retraining frequente**: Aggiornamenti frequenti necessari
-- ✅ **Cost-effective**: Costi computazionali bassi
-
-## Trade-off
-
-### Accuratezza vs Velocità
-
-- **Transformer**: Alta accuratezza, bassa velocità
-- **FastText**: Media accuratezza, alta velocità
-
-### Costi vs Performance
-
-- **Transformer**: Costi elevati, performance elevate
-- **FastText**: Costi bassi, performance buone
-
-### Complessità vs Semplicità
-
-- **Transformer**: Complesso, richiede expertise
-- **FastText**: Semplice, facile da mantenere
-
-## Risultati Sperimentali
-
-I risultati effettivi dipendono dal dataset utilizzato. Per un confronto accurato:
-
-1. Esegui `src/evaluation/compare_models.py`
-2. Verifica report in `reports/model_comparison/`
-3. Controlla metriche su MLflow
-
-## Raccomandazioni
-
-### Per Produzione
-
-- **Default**: Transformer per accuratezza
-- **Fallback**: FastText per alta disponibilità
-- **A/B Testing**: Testa entrambi e misura metriche business
-
-### Per Sviluppo
-
-- **Prototipo**: FastText per iterazione veloce
-- **Finale**: Transformer per performance ottimali
-
-### Per Retraining
-
-- **Frequente**: FastText (settimanale/mensile)
-- **Occasionale**: Transformer (trimestrale/annuale)
-
-## Conclusioni
-
-Entrambi i modelli hanno il loro posto nell'ecosistema:
-
-- **Transformer**: Scelta per accuratezza e qualità
-- **FastText**: Scelta per velocità e efficienza
-
-Il confronto empirico su dataset reali è essenziale per prendere decisioni informate basate su metriche business specifiche.
-
-
 # Modelli: Transformer vs FastText
 
 ## Obiettivo
 
-Il progetto confronta due approcci per sentiment analysis sullo **stesso dataset** e con una pipeline di preprocessing comune:
+Il presente documento confronta due approcci per l’analisi del sentiment applicati allo stesso dataset e con una pipeline di preprocessing condivisa:
 
-1) **Transformer**: `cardiffnlp/twitter-roberta-base-sentiment-latest` (Hugging Face)
-2) **FastText**: baseline supervised addestrata nel progetto
+1. **Transformer**: modello `cardiffnlp/twitter-roberta-base-sentiment-latest` (Hugging Face)
+2. **FastText**: modello supervised sviluppato come baseline nel progetto
 
-Il confronto è pensato per evidenziare trade-off tra accuratezza, semplicità e prestazioni.
+L’obiettivo è evidenziare le differenze in termini di accuratezza, complessità, prestazioni e applicabilità.
 
-## 1) Transformer (Hugging Face)
+## Modelli
 
-### Caratteristiche
+### Transformer
 
-- Modello RoBERTa pre-addestrato su testi brevi di stile social
-- Inferenza tramite pipeline HF
-- Adatto a testi “rumorosi” e a pattern linguistici complessi
+Il modello Transformer utilizzato è basato su RoBERTa pre-addestrato su testi brevi di tipo social. L’inferenza avviene tramite pipeline Hugging Face, che consente una gestione avanzata del contesto linguistico e una buona adattabilità tramite fine-tuning.
 
-### Pro
+**Vantaggi principali:**
+- Comprensione contestuale avanzata
+- Prestazioni elevate su testi complessi
+- Possibilità di adattamento tramite fine-tuning
 
-- ✅ Comprensione contestuale più ricca
-- ✅ Buone prestazioni “out-of-the-box” su testi tipo social
-- ✅ Possibilità di fine-tuning (se richiesto/utile)
+**Limitazioni:**
+- Maggiore complessità computazionale
+- Latenza superiore, soprattutto su CPU
 
-### Contro
+### FastText
 
-- ❌ Più costoso computazionalmente rispetto a FastText
-- ❌ Latenza maggiore su CPU
+Il modello FastText è un approccio supervised leggero e veloce, particolarmente indicato per scenari con risorse computazionali limitate. La sua struttura semplice permette un addestramento e un retraining rapidi.
 
-## 2) FastText (baseline supervised)
+**Vantaggi principali:**
+- Inferenza molto veloce e uso contenuto di memoria
+- Facilità di addestramento e aggiornamento
+- Adatto a deployment in ambienti CPU-only
 
-### Caratteristiche
+**Limitazioni:**
+- Comprensione contestuale limitata rispetto ai Transformer
+- Performance dipendenti dalla qualità del preprocessing e delle feature
 
-- Modello leggero e veloce
-- Addestramento rapido
-- Buona scelta come baseline e per scenari CPU-only
+## Confronto
 
-### Pro
+I due modelli rappresentano un trade-off tra accuratezza e semplicità operativa. Il Transformer offre una maggiore capacità di interpretare il contesto e testi complessi, mentre FastText privilegia la velocità e l’efficienza computazionale, risultando una scelta adatta per applicazioni con vincoli di risorse o necessità di aggiornamenti frequenti.
 
-- ✅ Inferenza molto veloce
-- ✅ Poco uso di memoria
-- ✅ Training e retraining rapidi
+La selezione del modello più appropriato dipende quindi dai requisiti specifici del caso d’uso, quali le risorse disponibili, la complessità linguistica dei testi e le esigenze di latenza.
 
-### Contro
+## Risultati
 
-- ❌ Comprensione contestuale limitata rispetto ai Transformer
-- ❌ Prestazioni dipendenti da feature engineering/preprocessing
-
-## Confronto e risultati
-
-Le metriche (accuracy, macro-F1, ecc.) e le visualizzazioni (confusion matrix) sono riportate nel notebook di consegna:
+I risultati sperimentali, comprensivi di metriche quali accuracy e macro-F1, oltre a visualizzazioni quali confusion matrix, sono riportati nel notebook di consegna:
 
 - `notebooks/DELIVERY_colab_sentiment_analysis.ipynb`
 
-> Nota: i risultati dipendono dal dataset e dalla configurazione di esecuzione; per questo motivo si rimanda al notebook riproducibile.
+Si raccomanda di consultare tale risorsa per un’analisi dettagliata e riproducibile delle performance dei modelli.
 
-## Quando usare cosa (indicazioni)
+## Scelte progettuali
 
-- **Transformer**: quando conta la qualità su testi brevi/rumorosi e la latenza non è l’unico vincolo.
-- **FastText**: quando servono semplicità, velocità e risorse limitate, oppure come baseline/fallback.
+- **Transformer**: consigliato quando la qualità dell’analisi è prioritaria e sono disponibili risorse computazionali adeguate, con possibilità di fine-tuning per adattamenti specifici.
+- **FastText**: indicato per scenari che richiedono rapidità, semplicità di implementazione e aggiornamenti frequenti, specialmente in ambienti con risorse limitate.
+- **Strategia ibrida**: valutare l’adozione di entrambi i modelli in contesti di A/B testing o fallback per bilanciare accuratezza e efficienza.
+
+Entrambi i modelli trovano quindi applicazione complementare nel sistema di analisi del sentiment, in funzione delle esigenze operative e degli obiettivi di business.
