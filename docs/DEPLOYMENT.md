@@ -262,3 +262,68 @@ I log sono salvati in:
 - **Input Validation**: Valida sempre input
 - **HTTPS**: Usa HTTPS in produzione
 
+
+# Guida Deploy (locale + opzioni)
+
+Questa guida descrive come eseguire il progetto **in locale**. Il deploy su Hugging Face è da considerarsi **opzionale** (estensione).
+
+## 1) Esecuzione Locale
+
+### Prerequisiti
+
+- Python 3.10+
+- (Opzionale) Docker
+
+### Setup
+
+```bash
+# Clona repository
+git clone https://github.com/Nimus74/sentiment-analysis-mlops.git
+cd sentiment-analysis-mlops
+
+# Crea e attiva ambiente virtuale
+python -m venv .venv
+source .venv/bin/activate  # Windows: .venv\Scripts\activate
+
+# Dipendenze
+python -m pip install --upgrade pip
+pip install -r requirements.txt
+
+# Install progetto in modalità sviluppo
+pip install -e .
+```
+
+### Avvio API
+
+```bash
+uvicorn src.api.main:app --host 0.0.0.0 --port 8000
+```
+
+API: `http://localhost:8000`
+
+### Test rapido API
+
+```bash
+curl http://localhost:8000/health
+
+curl -X POST http://localhost:8000/predict \
+  -H "Content-Type: application/json" \
+  -d '{"text":"Questo è fantastico!","model_type":"transformer"}'
+```
+
+## 2) Docker (opzionale)
+
+```bash
+docker-compose up --build
+```
+
+## 3) Hugging Face Spaces (opzionale)
+
+Il progetto include un `app.py` per una demo (es. Space HF). Questo step è facoltativo e non necessario per la consegna.
+
+Indicazioni generali:
+- crea uno Space su Hugging Face
+- seleziona SDK coerente con `app.py`
+- assicurati che `requirements.txt` includa tutte le dipendenze
+
+> Nota: per le valutazioni del progetto, la consegna principale è il **notebook Colab** linkato nel README.

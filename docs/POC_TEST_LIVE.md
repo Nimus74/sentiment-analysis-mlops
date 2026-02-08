@@ -696,3 +696,68 @@ Dopo aver completato il POC:
 **Ultimo Aggiornamento**: 2025-01-05  
 **Versione**: 1.0
 
+
+# Esecuzione del progetto (locale) – guida breve
+
+> La consegna principale del progetto è il notebook Colab: `notebooks/DELIVERY_colab_sentiment_analysis.ipynb`.
+> Questa guida descrive solo un’esecuzione **locale opzionale** per chi volesse riprodurre pipeline e servizi.
+
+## 1) Setup
+
+```bash
+git clone https://github.com/Nimus74/sentiment-analysis-mlops.git
+cd sentiment-analysis-mlops
+
+python -m venv .venv
+source .venv/bin/activate  # Windows: .venv\Scripts\activate
+
+python -m pip install --upgrade pip
+pip install -r requirements.txt
+pip install -e .
+```
+
+## 2) Dataset + preprocessing + split
+
+```bash
+python -m src.data.download_dataset
+python scripts/prepare_data.py
+```
+
+## 3) Training (opzionale)
+
+```bash
+python -m src.training.train_fasttext --config configs/config.yaml
+# (opzionale) training transformer se previsto dalla configurazione
+python -m src.training.train_transformer --config configs/config.yaml
+```
+
+## 4) Valutazione / confronto modelli
+
+```bash
+python -m src.evaluation.compare_models --config configs/config.yaml
+```
+
+## 5) Test
+
+```bash
+pytest -v
+```
+
+## 6) API
+
+```bash
+uvicorn src.api.main:app --host 0.0.0.0 --port 8000
+```
+
+- Swagger: `http://localhost:8000/docs`
+- Health: `http://localhost:8000/health`
+
+## 7) Monitoring (POC)
+
+```bash
+python -m src.monitoring.data_quality
+python -m src.monitoring.data_drift
+python -m src.monitoring.prediction_drift
+
+streamlit run src/monitoring/dashboard.py
+```

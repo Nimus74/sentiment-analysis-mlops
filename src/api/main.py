@@ -227,6 +227,10 @@ async def predict(request: PredictionRequest):
         # Predizione
         result = model.predict(request.text)
         
+        # FastText restituisce lista, Transformer restituisce dict
+        if isinstance(result, list):
+            result = result[0]
+        
         # Ottieni probabilità se disponibili
         probabilities = None
         if hasattr(model, "predict_batch"):

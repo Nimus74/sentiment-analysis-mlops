@@ -143,3 +143,65 @@ Entrambi i modelli hanno il loro posto nell'ecosistema:
 
 Il confronto empirico su dataset reali è essenziale per prendere decisioni informate basate su metriche business specifiche.
 
+
+# Modelli: Transformer vs FastText
+
+## Obiettivo
+
+Il progetto confronta due approcci per sentiment analysis sullo **stesso dataset** e con una pipeline di preprocessing comune:
+
+1) **Transformer**: `cardiffnlp/twitter-roberta-base-sentiment-latest` (Hugging Face)
+2) **FastText**: baseline supervised addestrata nel progetto
+
+Il confronto è pensato per evidenziare trade-off tra accuratezza, semplicità e prestazioni.
+
+## 1) Transformer (Hugging Face)
+
+### Caratteristiche
+
+- Modello RoBERTa pre-addestrato su testi brevi di stile social
+- Inferenza tramite pipeline HF
+- Adatto a testi “rumorosi” e a pattern linguistici complessi
+
+### Pro
+
+- ✅ Comprensione contestuale più ricca
+- ✅ Buone prestazioni “out-of-the-box” su testi tipo social
+- ✅ Possibilità di fine-tuning (se richiesto/utile)
+
+### Contro
+
+- ❌ Più costoso computazionalmente rispetto a FastText
+- ❌ Latenza maggiore su CPU
+
+## 2) FastText (baseline supervised)
+
+### Caratteristiche
+
+- Modello leggero e veloce
+- Addestramento rapido
+- Buona scelta come baseline e per scenari CPU-only
+
+### Pro
+
+- ✅ Inferenza molto veloce
+- ✅ Poco uso di memoria
+- ✅ Training e retraining rapidi
+
+### Contro
+
+- ❌ Comprensione contestuale limitata rispetto ai Transformer
+- ❌ Prestazioni dipendenti da feature engineering/preprocessing
+
+## Confronto e risultati
+
+Le metriche (accuracy, macro-F1, ecc.) e le visualizzazioni (confusion matrix) sono riportate nel notebook di consegna:
+
+- `notebooks/DELIVERY_colab_sentiment_analysis.ipynb`
+
+> Nota: i risultati dipendono dal dataset e dalla configurazione di esecuzione; per questo motivo si rimanda al notebook riproducibile.
+
+## Quando usare cosa (indicazioni)
+
+- **Transformer**: quando conta la qualità su testi brevi/rumorosi e la latenza non è l’unico vincolo.
+- **FastText**: quando servono semplicità, velocità e risorse limitate, oppure come baseline/fallback.

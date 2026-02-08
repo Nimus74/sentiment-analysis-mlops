@@ -57,6 +57,10 @@ def predict_sentiment(text: str, model_type: str):
     try:
         result = model.predict(text)
         
+        # FastText restituisce lista, Transformer restituisce dict
+        if isinstance(result, list):
+            result = result[0]
+        
         label = result["label"]
         confidence = result["score"]
         
