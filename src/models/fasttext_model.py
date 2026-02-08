@@ -62,45 +62,34 @@ class FastTextSentimentModel:
         # Ordine label per probabilità
         self.labels = ["negative", "neutral", "positive"]
     
-    def predict(self, text: str) -> Dict[str, any]:
+    def predict(self, texts):
         """
-        Predice sentiment per un singolo testo.
-        
-        Args:
-            text: Testo da analizzare
-        
-        Returns:
-            Dizionario con predizione e confidence
+        Predict sentiment labels for one or more texts using FastText.
+        Returns a list of dicts: [{"label": <str>, "score": <float>}]
         """
-        # FastText predice (label, score)
-        # Gestione compatibilità NumPy 2.x - fasttext restituisce (labels, scores)
-        result = self.model.predict(text, k=1)
-        
-        # FastText restituisce sempre una tupla (labels, scores)
-        if isinstance(result, tuple) and len(result) == 2:
-            labels, scores = result
-            # Estrai primo elemento
-            label_raw = labels[0] if isinstance(labels, (list, tuple, np.ndarray)) else labels
-            # Converti score in float, gestendo array numpy
-            if isinstance(scores, np.ndarray):
-                score = float(scores[0])
-            elif isinstance(scores, (list, tuple)):
-                score = float(scores[0])
+        if isinstance(texts, str):
+            texts = [texts]
+
+        predictions = []
+
+        for text in texts:
+            labels, scores = self.model.predict(text, k=1)
+
+            # FastText returns lists
+            raw_label = labels[0] if labels else None
+            score = float(scores[0]) if scores else 0.0
+
+            if raw_label is None:
+                label = None
             else:
-                score = float(scores)
-        else:
-            # Fallback per formati diversi
-            label_raw, score = result[0] if isinstance(result, (list, tuple)) else result
-            score = float(score)
-        
-        # Rimuovi prefisso __label__
-        label = label_raw.replace("__label__", "")
-        
-        return {
-            "label": label,
-            "score": float(score),
-            "text": text,
-        }
+                label = raw_label.replace("__label__", "")
+
+            predictions.append({
+                "label": label,
+                "score": score
+            })
+
+        return predictions
     
     def predict_batch(
         self,
@@ -142,7 +131,11 @@ class FastTextSentimentModel:
                     "text": text,
                 }
             else:
-                pred = self.predict(text)
+                pred_list = self.predict(text)
+                # predict() restituisce sempre lista, prendiamo primo elemento
+                pred = pred_list[0] if pred_list else {"label": None, "score": 0.0}
+                # Aggiungi text per coerenza con formato batch
+                pred["text"] = text
             
             results.append(pred)
         
