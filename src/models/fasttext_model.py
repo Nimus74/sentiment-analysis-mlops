@@ -154,10 +154,26 @@ class FastTextSentimentModel:
         """
         predictions = self.predict_batch(texts)
         
-        # Converti label in numeri
-        label_to_num = {"negative": 0, "neutral": 1, "positive": 2}
-        labels = [label_to_num[pred["label"]] for pred in predictions]
-        
+        # Converti label in numeri (supporta: '0','1','2', '__label__0', ... e anche negative/neutral/positive)
+        def _norm(lbl: str) -> str:
+            s = str(lbl).strip()
+            if s.startswith("__label__"):
+                s = s.replace("__label__", "", 1)
+            return s.lower()
+
+        label_to_num = {
+            "negative": 0, "neg": 0, "0": 0,
+            "neutral": 1, "neu": 1, "1": 1,
+            "positive": 2, "pos": 2, "2": 2,
+        }
+
+        labels = []
+        for pred in predictions:
+            key = _norm(pred["label"])
+            if key not in label_to_num:
+                raise ValueError(f"Unexpected FastText label: {pred['label']}")
+            labels.append(label_to_num[key])
+
         return np.array(labels)
     
     @classmethod
