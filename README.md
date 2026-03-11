@@ -1,116 +1,178 @@
-# Sentiment Analysis MLOps
+# Sentiment Analysis MLOps Pipeline
 
-Sistema focalizzato sull'analisi del sentiment con architettura orientata MLOps, che utilizza un modello Transformer come approccio principale e FastText come baseline addestrata nel progetto per confronto.
+End-to-end **MLOps pipeline for sentiment analysis** combining modern NLP models, experiment tracking, API serving, and monitoring components.
 
+The project demonstrates how a machine learning system can be structured using **engineering and MLOps principles**, including reproducible training, model comparison, deployment, and monitoring.
 
-## 📋 Overview
+---
 
-Questo progetto implementa un sistema di sentiment analysis che permette di:
-- Classificare il sentiment in positivo, neutro, negativo
-- Confrontare modelli Transformer e FastText
-- Integrare componenti sperimentali di monitoring
+# Overview
 
+This project implements a sentiment analysis system capable of classifying text into:
 
-## 🏗️ Architettura
+- **Positive**
+- **Neutral**
+- **Negative**
 
-Il sistema è composto da:
-- **Data Pipeline**: Ingestion, preprocessing, validation e split riproducibili
-- **Modelli**: Transformer basato su cardiffnlp/twitter-roberta-base-sentiment-latest come modello principale; FastText addestrato come baseline nel progetto per confronto
-- **MLOps**: MLflow per experiment tracking, Evidently AI per monitoring sperimentale
-- **API**: FastAPI per inferenza con selezione backend
-- **Deploy**: Deploy su Hugging Face opzionale e sperimentale
-- **CI/CD**: GitHub Actions con test automatici
-- **Monitoring**: Componenti di monitoring sperimentali per data quality e drift
-- **Retraining**: Retraining automatico opzionale e sperimentale per FastText
+Two model approaches are included:
 
+- **Transformer model** (primary model)  
+  `cardiffnlp/twitter-roberta-base-sentiment-latest`
 
-## Allineamento con la traccia della consegna
+- **FastText model** (baseline trained in the project)
 
-Sebbene la traccia della consegna menzioni l'uso di FastText, in questo progetto è stato scelto un modello Transformer come soluzione primaria in quanto dimostra prestazioni superiori su testi brevi e rumorosi tipici dei social media. FastText è incluso come baseline supervisionata, addestrata su dataset pubblici e utilizzata per confronto. Questa scelta progettuale è intenzionale e documentata per motivi di accuratezza e completezza nell'analisi.
+The goal is to demonstrate a complete **machine learning lifecycle**, from training to deployment and monitoring.
 
+---
 
-## Notebook Google Colab (Consegna)
+# ML Pipeline
 
-Apri ed esegui il notebook direttamente in Google Colab:
+The system follows a typical MLOps workflow:
 
-- **Colab**: https://colab.research.google.com/github/Nimus74/sentiment-analysis-mlops/blob/main/notebooks/DELIVERY_colab_sentiment_analysis.ipynb
-- **Repository**: https://github.com/Nimus74/sentiment-analysis-mlops
+```
+Data Ingestion
+      ↓
+Data Processing
+      ↓
+Training (Transformer / FastText)
+      ↓
+Evaluation
+      ↓
+Experiment Tracking (MLflow)
+      ↓
+Model Serving (FastAPI)
+      ↓
+Monitoring (Evidently)
+```
 
-> Nota: in alternativa, il notebook può essere condiviso anche tramite Google Drive (modalità tipica di consegna).
+---
 
+# Architecture
 
-## 🎛 Demo e funzionalità opzionali (non richieste per la consegna)
+The system includes several components:
 
-Oltre al notebook di consegna, il repository include alcune componenti **opzionali** sviluppate per dimostrare un approccio MLOps end-to-end:
+**Data Pipeline**
+- data ingestion
+- preprocessing
+- validation
+- reproducible dataset splits
 
-### Demo UI – Analisi del Sentiment
-È disponibile una semplice interfaccia web (Gradio) per testare l’inferenza dei modelli Transformer e FastText:
+**Model Training**
+- Transformer model for high accuracy
+- FastText baseline for comparison
+
+**Experiment Tracking**
+- MLflow integration for experiment logging
+
+**Model Serving**
+- FastAPI inference API
+
+**Deployment**
+- Docker containerization
+- docker-compose local deployment
+
+**Monitoring**
+- Evidently AI reports
+- Streamlit monitoring dashboard
+
+**CI/CD**
+- GitHub Actions automated testing pipeline
+
+---
+
+# Demo Applications
+
+## Sentiment Analysis Demo
+
+A simple web interface allows interactive testing of the models.
+
+Run locally:
 
 ```bash
 python app.py
 ```
 
-L’applicazione sarà disponibile all’indirizzo:
-http://127.0.0.1:7860
+The interface will be available at:
 
-### Monitoring & Reporting (POC)
-Il progetto include inoltre una dashboard di monitoring realizzata in Streamlit, con report generati tramite Evidently AI:
+```
+http://127.0.0.1:7860
+```
+
+---
+
+## Monitoring Dashboard
+
+Monitoring reports can be visualized through a Streamlit dashboard.
 
 ```bash
 streamlit run src/monitoring/dashboard.py
 ```
 
-La dashboard consente di visualizzare:
-- Data Quality
-- Data Drift
-- Prediction Drift
-- Performance del modello
+The dashboard shows:
 
-> Nota: queste funzionalità sono **proof-of-concept** e non sono richieste ai fini della valutazione.
-> La consegna ufficiale del progetto è rappresentata dal notebook Google Colab indicato sopra.
+- data quality metrics
+- data drift
+- prediction drift
+- model performance
 
+---
 
-## 🚀 Quick Start
+# Quick Start
 
-### Installazione
+Clone the repository:
 
 ```bash
-# Clonare il repository
 git clone https://github.com/Nimus74/sentiment-analysis-mlops.git
 cd sentiment-analysis-mlops
+```
 
-# Creare ambiente virtuale
+Create a virtual environment:
+
+```bash
 python -m venv venv
-source venv/bin/activate  # Su Windows: venv\Scripts\activate
+source venv/bin/activate
+```
 
-# Installare dipendenze
+Install dependencies:
+
+```bash
 pip install -r requirements.txt
-
-# Installare package in modalità sviluppo
 pip install -e .
 ```
 
-### Training Modelli
+---
+
+# Training Models
+
+Train the Transformer model:
 
 ```bash
-# Training Transformer
 python src/training/train_transformer.py --config configs/config.yaml
+```
 
-# Training FastText
+Train the FastText baseline:
+
+```bash
 python src/training/train_fasttext.py --config configs/config.yaml
 ```
 
-### Avviare API
+---
+
+# Run the API
+
+Using Docker:
 
 ```bash
-# Con Docker
 docker-compose up
+```
 
-# Oppure direttamente
+Or run directly:
+
+```bash
 uvicorn src.api.main:app --host 0.0.0.0 --port 8000
 ```
 
-### Uso API
+Example request:
 
 ```python
 import requests
@@ -118,67 +180,63 @@ import requests
 response = requests.post(
     "http://localhost:8000/predict",
     json={
-        "text": "Questo prodotto è fantastico!",
-        "model_type": "transformer"  # o "fasttext"
+        "text": "This product is amazing!",
+        "model_type": "transformer"
     }
 )
+
 print(response.json())
 ```
 
-## 📊 Metriche
+---
 
-- **Metrica principale**: Macro-F1 Score
-- **Metriche secondarie**: Accuracy, Precision, Recall per classe, Confusion Matrix
-
-## 📁 Struttura Progetto
+# Project Structure
 
 ```
-sentiment_analysis/
-├── data/              # Dataset e cache
-├── src/
-│   ├── data/         # Data pipeline
-│   ├── models/       # Modelli (Transformer, FastText)
-│   ├── evaluation/   # Metriche e valutazione
-│   ├── api/          # API FastAPI
-│   ├── monitoring/   # Evidently AI reports
-│   └── training/     # Script training e retraining
-├── tests/            # Test unitari e integrazione
-├── notebooks/        # Notebook analisi
-├── configs/          # File configurazione YAML
-├── docs/             # Documentazione
-└── .github/workflows/ # CI/CD pipelines
+sentiment-analysis-mlops
+│
+├── src
+│   ├── data
+│   ├── training
+│   ├── evaluation
+│   ├── models
+│   ├── api
+│   └── monitoring
+│
+├── configs
+├── notebooks
+├── tests
+├── docs
+│
+├── Dockerfile
+├── docker-compose.yml
+├── requirements.txt
+└── README.md
 ```
 
+---
 
-## 📚 Documentazione
+# Technologies Used
 
-La documentazione presente nella cartella `docs/` include materiali di supporto e approfondimento
-sviluppati durante il progetto, alcuni dei quali in forma di proof-of-concept o documentazione tecnica
-di lavoro.
+- Python
+- PyTorch
+- Transformers
+- FastText
+- FastAPI
+- Docker
+- MLflow
+- Evidently AI
+- Streamlit
+- GitHub Actions
 
-I file principali includono:
-- [Guida POC Test Live](docs/POC_TEST_LIVE.md) – guida operativa passo-passo all’esecuzione del progetto
-- [Architettura](docs/ARCHITECTURE.md)
-- [Modelli](docs/MODELS.md)
-- [Deploy](docs/DEPLOYMENT.md)
-- [Monitoring](docs/MONITORING.md)
+---
 
-> Nota: parte della documentazione ha carattere **sperimentale o tecnico-interno** ed è fornita
-> a supporto della comprensione del progetto.
+# Author
 
+**Francesco Scarano**
 
-## 🧪 Testing
+Senior IT Manager  
+AI Engineering | Data & Digital Solutions
 
-```bash
-# Eseguire tutti i test
-pytest
-
-# Con coverage
-pytest --cov=src --cov-report=html
-```
-
-## 📝 Stato del progetto / Limitazioni
-
-- CI e test automatici sono implementati e tutti i test sono superati con successo
-- Componenti di monitoring sono implementati come proof-of-concept e non ancora integrati in un sistema di produzione completo
-- Deploy su Hugging Face e retraining continuo non sono completamente automatizzati e rappresentano estensioni opzionali e sperimentali del progetto
+GitHub  
+https://github.com/Nimus74
