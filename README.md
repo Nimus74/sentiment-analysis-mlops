@@ -118,6 +118,21 @@ http://127.0.0.1:7860
 
 ---
 
+## Demo Interface
+
+Interactive sentiment analysis demo built with Gradio.
+
+![Sentiment Demo](images/sentiment_demo.png)
+
+The interface allows users to:
+
+- input custom text
+- select the model (Transformer or FastText)
+- run real-time sentiment predictions
+- test predefined example sentences
+
+---
+
 ## Monitoring Dashboard
 
 Monitoring reports can be visualized through a Streamlit dashboard.
