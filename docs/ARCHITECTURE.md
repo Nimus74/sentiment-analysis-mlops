@@ -1,104 +1,190 @@
-# Architettura Sistema Sentiment Analysis (MLOps)
+# System Architecture
 
-## Overview
+This project implements a sentiment analysis system designed following MLOps principles, with a modular architecture that separates data processing, model training, serving, and monitoring.
 
-Questo progetto implementa una pipeline end-to-end per **sentiment analysis** con un approccio orientato alle pratiche MLOps (data pipeline riproducibile, training/evaluation, API di inferenza, CI). Alcuni componenti (monitoring, deploy su Hugging Face, retraining) sono presenti come **proof-of-concept / estensioni opzionali**.
+The goal is to demonstrate a reproducible and extensible machine learning system lifecycle, from data ingestion to model deployment and monitoring.
 
-## Diagramma Architettura
+---
 
-```mermaid
-graph TB
-    subgraph "Data Pipeline"
-        A[Dataset (Hugging Face)] --> B[Download & Validation]
-        B --> C[Preprocessing]
-        C --> D[Train/Val/Test Split]
-    end
+## High-Level Architecture
 
-    subgraph "Training"
-        D --> E[Transformer (baseline pre-trained)]
-        D --> F[FastText (supervised)]
-        E --> G[MLflow Tracking]
-        F --> G
-    end
+The system architecture follows a typical MLOps workflow:
 
-    subgraph "Evaluation"
-        G --> H[Model Comparison]
-        H --> I[Metrics & Reports]
-    end
-
-    subgraph "Serving"
-        I --> J[FastAPI Service]
-        J --> K[Docker (opzionale)]
-    end
-
-    subgraph "Monitoring (POC)"
-        J --> M[Evidently AI]
-        M --> N[Data Quality]
-        M --> O[Data Drift]
-        M --> P[Prediction Drift]
-        M --> Q[Dashboard]
-    end
+```
+Data Sources
+      ↓
+Data Processing Pipeline
+      ↓
+Model Training
+      ↓
+Model Evaluation
+      ↓
+Model Artifacts
+      ↓
+Inference API (FastAPI)
+      ↓
+Monitoring & Reporting
 ```
 
-## Componenti Principali
+Each component is implemented as an independent module to improve maintainability, scalability, and reproducibility.
 
-### 1) Data Pipeline (`src/data/`)
+---
 
-- `download_dataset.py`: download dataset (Hugging Face) e controlli di base
-- `preprocessing.py`: pulizia testi standardizzata (URL, menzioni, hashtag, ecc.)
-- `validation.py`: controlli qualità (colonne attese, duplicati, statistiche descrittive)
-- `split.py`: split stratificato riproducibile train/val/test
+## Core Components
 
-**Nota**: la pipeline è progettata per applicare lo **stesso preprocessing** a entrambi i modelli, così da rendere il confronto più equo.
+### Data Pipeline
 
-### 2) Modelli (`src/models/`)
+The data pipeline is responsible for:
 
-#### Transformer
-- Modello pre-addestrato: `cardiffnlp/twitter-roberta-base-sentiment-latest`
-- Utilizzato come modello “principale” nel progetto (inference via pipeline HF)
+- dataset loading
+- preprocessing and normalization
+- dataset validation
+- reproducible train / validation splits
 
-#### FastText
-- Modello supervised addestrato sul dataset utilizzato nel progetto
-- Utilizzato come baseline leggera e rapida
+These steps ensure that training experiments remain reproducible and consistent across multiple runs.
 
-### 3) Training & Evaluation (`src/training/`, `src/evaluation/`)
+---
 
-- Training script per FastText e gestione esperimenti con MLflow
-- Metriche standard: accuracy, precision/recall/F1 (macro/micro/weighted)
-- Confronto su stesso split di test
+### Model Training
 
-### 4) API Service (`src/api/`)
+Two model approaches are implemented in the system.
 
-- Framework: FastAPI
-- Endpoint principali:
-  - `/predict`: inferenza con selezione modello
-  - `/health`: health check
-  - `/models`: modelli disponibili
-  - `/feedback`: raccolta feedback (POC)
+#### Transformer Model
 
-### 5) Monitoring (POC) (`src/monitoring/`)
+The primary model used in the project is:
 
-- Generazione report con Evidently AI (qualità dati e drift)
-- Dashboard Streamlit per consultazione report
+```
+cardiffnlp/twitter-roberta-base-sentiment-latest
+```
 
-> Il monitoring è incluso come **POC**: serve a dimostrare la fattibilità dell’osservabilità del modello, non come soluzione production-ready.
+Advantages:
 
-## Flusso Dati (alto livello)
+- high performance on short text
+- strong results on social media sentiment tasks
+- pretrained on large-scale datasets
 
-1. Download dataset
-2. Preprocessing
-3. Validazione
-4. Split train/val/test
-5. Training / inference (Transformer + FastText)
-6. Evaluation e confronto
-7. Serving via API
-8. (Opzionale) report di monitoring
+---
 
-## Scelte Tecnologiche
+#### FastText Baseline
 
-- **ML / NLP**: Hugging Face Transformers + FastText (baseline)
-- **MLOps**: MLflow (tracking)
-- **API**: FastAPI
-- **Container**: Docker (opzionale)
-- **CI**: GitHub Actions (test automatici)
-- **Monitoring (POC)**: Evidently AI + Streamlit
+FastText is included as a baseline model trained within the project.
+
+It provides:
+
+- very fast training
+- lightweight inference
+- a baseline comparison against the Transformer model
+
+---
+
+### Experiment Tracking
+
+Training experiments can be tracked using MLflow, enabling:
+
+- experiment logging
+- parameter tracking
+- metric comparison
+- artifact storage
+
+This allows reproducible experimentation and easier comparison between models.
+
+---
+
+### Model Serving
+
+The trained models are exposed through a FastAPI inference service.
+
+The API enables:
+
+- real-time sentiment prediction
+- dynamic model selection (Transformer or FastText)
+- integration with external applications
+
+Example workflow:
+
+```
+Client Request
+      ↓
+FastAPI Service
+      ↓
+Model Inference
+      ↓
+Prediction Response
+```
+
+---
+
+### Monitoring System
+
+The project includes experimental monitoring components based on Evidently AI.
+
+Monitoring reports include:
+
+- data quality checks
+- data drift detection
+- prediction drift monitoring
+- model performance metrics
+
+These reports can be visualized through a Streamlit dashboard.
+
+---
+
+## Deployment Architecture
+
+The system supports containerized deployment using Docker.
+
+The service can be deployed using:
+
+- Docker
+- docker-compose
+- local development environments
+
+Containerization ensures consistent runtime environments across development and deployment.
+
+---
+
+## Repository Structure (Simplified)
+
+```
+sentiment-analysis-mlops
+│
+├── src
+│   ├── data
+│   ├── training
+│   ├── models
+│   ├── evaluation
+│   ├── api
+│   └── monitoring
+│
+├── configs
+├── notebooks
+├── docs
+├── tests
+│
+├── Dockerfile
+├── docker-compose.yml
+└── requirements.txt
+```
+
+---
+
+## Design Principles
+
+The system is designed following these engineering principles:
+
+- **Modularity** — clear separation between components
+- **Reproducibility** — deterministic pipelines and configuration files
+- **Experimentation** — ability to compare multiple models
+- **Extensibility** — new models and pipelines can be integrated easily
+- **Observability** — monitoring and reporting tools are included
+
+---
+
+## Future Improvements
+
+Potential extensions of the system include:
+
+- automated retraining pipelines
+- model registry integration
+- advanced CI/CD workflows for ML pipelines
+- distributed training support
