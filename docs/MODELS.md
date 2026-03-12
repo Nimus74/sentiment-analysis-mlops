@@ -1,60 +1,153 @@
-# Modelli: Transformer vs FastText
+# Models
 
-## Obiettivo
+This project includes two different model approaches for sentiment analysis:
 
-Il presente documento confronta due approcci per l’analisi del sentiment applicati allo stesso dataset e con una pipeline di preprocessing condivisa:
+- a **Transformer-based model** as the primary solution
+- a **FastText model** as a lightweight baseline for comparison
 
-1. **Transformer**: modello `cardiffnlp/twitter-roberta-base-sentiment-latest` (Hugging Face)
-2. **FastText**: modello supervised sviluppato come baseline nel progetto
+The purpose of this design is to compare a modern deep learning approach with a faster and more lightweight baseline, highlighting the trade-off between performance and efficiency.
 
-L’obiettivo è evidenziare le differenze in termini di accuratezza, complessità, prestazioni e applicabilità.
+---
 
-## Modelli
+## Transformer Model
 
-### Transformer
+The primary model used in this project is:
 
-Il modello Transformer utilizzato è basato su RoBERTa pre-addestrato su testi brevi di tipo social. L’inferenza avviene tramite pipeline Hugging Face, che consente una gestione avanzata del contesto linguistico e una buona adattabilità tramite fine-tuning.
+```
+cardiffnlp/twitter-roberta-base-sentiment-latest
+```
 
-**Vantaggi principali:**
-- Comprensione contestuale avanzata
-- Prestazioni elevate su testi complessi
-- Possibilità di adattamento tramite fine-tuning
+This is a Transformer model specialized in sentiment analysis on short, noisy text such as social media posts.
 
-**Limitazioni:**
-- Maggiore complessità computazionale
-- Latenza superiore, soprattutto su CPU
+### Why this model
 
-### FastText
+The Transformer approach was selected because it provides:
 
-Il modello FastText è un approccio supervised leggero e veloce, particolarmente indicato per scenari con risorse computazionali limitate. La sua struttura semplice permette un addestramento e un retraining rapidi.
+- strong performance on sentiment classification tasks
+- contextual understanding of words and phrases
+- robustness on short informal text
+- better semantic representation than traditional bag-of-words models
 
-**Vantaggi principali:**
-- Inferenza molto veloce e uso contenuto di memoria
-- Facilità di addestramento e aggiornamento
-- Adatto a deployment in ambienti CPU-only
+### Strengths
 
-**Limitazioni:**
-- Comprensione contestuale limitata rispetto ai Transformer
-- Performance dipendenti dalla qualità del preprocessing e delle feature
+- high classification performance
+- strong contextual representation
+- effective on social-media style language
+- suitable for production-grade NLP tasks
 
-## Confronto
+### Limitations
 
-I due modelli rappresentano un trade-off tra accuratezza e semplicità operativa. Il Transformer offre una maggiore capacità di interpretare il contesto e testi complessi, mentre FastText privilegia la velocità e l’efficienza computazionale, risultando una scelta adatta per applicazioni con vincoli di risorse o necessità di aggiornamenti frequenti.
+- heavier than classical ML baselines
+- slower inference compared to FastText
+- requires more computational resources
 
-La selezione del modello più appropriato dipende quindi dai requisiti specifici del caso d’uso, quali le risorse disponibili, la complessità linguistica dei testi e le esigenze di latenza.
+---
 
-## Risultati
+## FastText Baseline
 
-I risultati sperimentali, comprensivi di metriche quali accuracy e macro-F1, oltre a visualizzazioni quali confusion matrix, sono riportati nel notebook di consegna:
+FastText is included as a baseline model trained within the project.
 
-- `notebooks/DELIVERY_colab_sentiment_analysis.ipynb`
+It is useful for comparing a lightweight NLP model against the Transformer solution.
 
-Si raccomanda di consultare tale risorsa per un’analisi dettagliata e riproducibile delle performance dei modelli.
+### Why FastText
 
-## Scelte progettuali
+FastText provides:
 
-- **Transformer**: consigliato quando la qualità dell’analisi è prioritaria e sono disponibili risorse computazionali adeguate, con possibilità di fine-tuning per adattamenti specifici.
-- **FastText**: indicato per scenari che richiedono rapidità, semplicità di implementazione e aggiornamenti frequenti, specialmente in ambienti con risorse limitate.
-- **Strategia ibrida**: valutare l’adozione di entrambi i modelli in contesti di A/B testing o fallback per bilanciare accuratezza e efficienza.
+- fast training
+- efficient inference
+- low computational cost
+- a simple and interpretable baseline
 
-Entrambi i modelli trovano quindi applicazione complementare nel sistema di analisi del sentiment, in funzione delle esigenze operative e degli obiettivi di business.
+### Strengths
+
+- lightweight and fast
+- easy to train
+- efficient on CPU
+- useful for comparison and fallback scenarios
+
+### Limitations
+
+- lower expressive power than Transformers
+- weaker contextual understanding
+- more limited performance on complex language patterns
+
+---
+
+## Model Comparison
+
+The two approaches serve different purposes within the project:
+
+| Aspect | Transformer | FastText |
+|--------|-------------|----------|
+| Performance | Higher | Lower |
+| Training Speed | Slower | Faster |
+| Inference Speed | Slower | Faster |
+| Resource Usage | Higher | Lower |
+| Context Understanding | Strong | Limited |
+| Production Simplicity | Medium | High |
+
+The Transformer model is the **primary model** for best predictive performance.
+
+FastText is maintained as a **baseline and lightweight alternative**, useful for comparison and potential low-resource deployment scenarios.
+
+---
+
+## Output Classes
+
+Both models classify sentiment into three categories:
+
+- **Positive**
+- **Neutral**
+- **Negative**
+
+The final prediction pipeline can expose one or both models depending on the inference configuration.
+
+---
+
+## Training Strategy
+
+The project supports separate training workflows for both models.
+
+### Transformer Training
+
+The Transformer training pipeline includes:
+
+- tokenization
+- fine-tuning on labeled sentiment data
+- evaluation with classification metrics
+- experiment tracking
+
+### FastText Training
+
+The FastText pipeline includes:
+
+- text preprocessing
+- label formatting
+- supervised FastText training
+- evaluation on validation and test data
+
+---
+
+## Why Two Models
+
+Using two model families in the same project provides several benefits:
+
+- comparison between modern deep learning and lightweight NLP approaches
+- better understanding of performance vs efficiency trade-offs
+- support for different deployment scenarios
+- stronger MLOps experimentation workflow
+
+This design reflects a practical engineering mindset:  
+the best model is not always the lightest, and the fastest model is not always the most accurate.
+
+---
+
+## Future Improvements
+
+Potential extensions for the modeling layer include:
+
+- additional Transformer architectures
+- hyperparameter optimization
+- model registry integration
+- ensemble strategies
+- quantized models for lightweight deployment
