@@ -62,7 +62,8 @@ flowchart TD
     I --> K[Monitoring with Evidently]
     K --> L[Streamlit Dashboard]
 ```
----
+
+This pipeline highlights the end-to-end lifecycle of the project, from data processing and model training to API serving and monitoring.
 
 # Architecture
 
