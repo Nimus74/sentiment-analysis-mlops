@@ -47,6 +47,23 @@ Monitoring (Evidently)
 
 ---
 
+```mermaid
+flowchart TD
+    A[Raw Data] --> B[Preprocessing & Validation]
+    B --> C[Training Pipeline]
+    C --> D[Transformer Model]
+    C --> E[FastText Baseline]
+    D --> F[Evaluation]
+    E --> F
+    F --> G[MLflow Tracking]
+    F --> H[Saved Models / Artifacts]
+    H --> I[FastAPI Inference API]
+    I --> J[Gradio Demo]
+    I --> K[Monitoring with Evidently]
+    K --> L[Streamlit Dashboard]
+```
+---
+
 # Architecture
 
 The system includes several components:
